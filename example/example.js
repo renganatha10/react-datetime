@@ -4,10 +4,14 @@ var ReactDOM = require('react-dom');
 
 ReactDOM.render(
   React.createElement(DateTime, {
-    viewMode: 'months',
-    dateFormat: 'MMMM',
+    dateFormat: 'YYYY',
+    closeOnSelect: true,
+    startDate: new Date().getFullYear() - 13,
     isValidDate: function(current) {
       return current.isBefore(DateTime.moment().startOf('month'));
+    },
+    onChange: function(e) {
+      console.log(e, "EEE")
     }
   }),
   document.getElementById('datetime')

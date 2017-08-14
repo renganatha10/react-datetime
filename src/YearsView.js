@@ -86,7 +86,7 @@ var DateTimePickerYears = onClickOutside( createClass({
 	},
 
 	updateSelectedYear: function( event ) {
-		this.props.updateSelectedDate( event );
+		this.props.updateSelectedDate( event, true );
 	},
 
 	renderYear: function( props, year ) {

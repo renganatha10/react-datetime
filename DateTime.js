@@ -49,6 +49,7 @@ var Datetime = createClass({
 			strictParsing: true,
 			closeOnSelect: false,
 			closeOnTab: true,
+			startDate: new Date().getFullYear(),
 			utc: false
 		};
 	},
@@ -80,7 +81,7 @@ var Datetime = createClass({
 
 		viewDate = selectedDate ?
 			selectedDate.clone().startOf('month') :
-			this.localMoment().startOf('month')
+			this.localMoment(props.startDate.toString()).startOf('month')
 		;
 
 		updateOn = this.getUpdateOn(formats);
