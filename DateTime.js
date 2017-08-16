@@ -246,32 +246,40 @@ var Datetime = createClass({
 		};
 	},
 
-	addTime: function( amount, type, toSelected ) {
-		return this.updateTime( 'add', amount, type, toSelected );
-	},
+	addTime: function(amount, type, toSelected) {
+    var end = parseInt(this.props.endDate.toString());
+    var endYear = end % 100 !== 0 ? end - end % 100 : end;
+    var currentYear = this.state.viewDate.clone().year();
 
-	subtractTime: function( amount, type, toSelected ) {
-		return this.updateTime( 'subtract', amount, type, toSelected );
-	},
+    if (endYear > currentYear) {
+      return this.updateTime("add", amount, type, toSelected);
+    }
+  },
 
-	updateTime: function( op, amount, type, toSelected ) {
-		var me = this;
+  subtractTime: function(amount, type, toSelected) {
+    var start = parseInt(this.props.startDate.toString());
+    var startYear = start % 100 !== 0 ? start - start % 100 : start;
+    var currentYear = parseInt(this.state.viewDate.clone().year());
+    if (startYear < currentYear) {
+      return this.updateTime("subtract", amount, type, toSelected);
+    }
+  },
 
-		return function() {
-			var update = {},
-				date = toSelected ? 'selectedDate' : 'viewDate'
-			;
+  updateTime: function(op, amount, type, toSelected) {
+    var me = this;
 
-			update[ date ] = me.state[ date ].clone()[ op ]( amount, type );
-			var currentYear = update[ date ].year();
-			var endYear = parseInt(me.props.endDate.toString());
-			var startYear = parseInt(me.props.startDate.toString());
-			
-			if ((endYear > currentYear) && (startYear < currentYear )) {
-				me.setState(update);
-			}	
-		};
-	},
+    return function() {
+      var update = {},
+        date = toSelected ? "selectedDate" : "viewDate";
+
+      update[date] = me.state[date].clone()[op](amount, type);
+      var currentYear = update[date].year();
+
+      me.setState(update);
+
+
+    };
+  },
 
 	allowedSetTime: ['hours', 'minutes', 'seconds', 'milliseconds'],
 	setTime: function( type, value ) {
@@ -354,9 +362,25 @@ var Datetime = createClass({
 
 	openCalendar: function() {
 		if (!this.state.open) {
-			this.setState({ open: true }, function() {
-				this.props.onFocus();
-			});
+      var currentYear = this.state.viewDate.year();
+			var endYear = parseInt(this.props.endDate.toString());
+      var startYear = parseInt(this.props.startDate.toString());
+      var viewDate = null;
+      if (endYear < currentYear) {
+        viewDate = this.localMoment(this.props.endDate.toString());
+        this.setState({viewDate :viewDate, open: true}, function() {
+          this.props.onFocus();
+        });
+      } else if (startYear > currentYear ) {
+        viewDate = this.localMoment(this.props.startDate.toString());
+        this.setState({viewDate :viewDate, open: true}, function() {
+          this.props.onFocus();
+        });
+			}	else {
+        this.setState({ open: true }, function() {
+          this.props.onFocus();
+        });
+      }
 		}
 	},
 
