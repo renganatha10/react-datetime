@@ -49,7 +49,8 @@ var Datetime = createClass({
 			strictParsing: true,
 			closeOnSelect: false,
 			closeOnTab: true,
-			startDate: new Date().getFullYear(),
+			endDate: new Date().getFullYear(),
+			startDate: 1900,
 			utc: false
 		};
 	},
@@ -81,7 +82,7 @@ var Datetime = createClass({
 
 		viewDate = selectedDate ?
 			selectedDate.clone().startOf('month') :
-			this.localMoment(props.startDate.toString()).startOf('month')
+			this.localMoment(props.endDate.toString()).startOf('month')
 		;
 
 		updateOn = this.getUpdateOn(formats);
@@ -262,8 +263,13 @@ var Datetime = createClass({
 			;
 
 			update[ date ] = me.state[ date ].clone()[ op ]( amount, type );
-
-			me.setState( update );
+			var currentYear = update[ date ].year();
+			var endYear = parseInt(me.props.endDate.toString());
+			var startYear = parseInt(me.props.startDate.toString());
+			
+			if ((endYear > currentYear) && (startYear < currentYear )) {
+				me.setState(update);
+			}	
 		};
 	},
 
